@@ -1,0 +1,35 @@
+name: Merge Dev to QA
+
+on:
+ push:
+    branches:
+      - dev
+
+jobs:
+ merge-to-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      - name: Create Pull Request
+        id: create-pr
+        uses: repo-sync/pull-request@v2
+        with:
+          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          source_branch: dev
+          destination_branch: qa
+          pr_title: "[Automated] Merge dev to qa"
+          pr_body: "Automated Pull Request to merge changes from dev to qa"
+          pr_reviewer: "your-reviewer-username" # Optional: Specify a reviewer
+          pr_assignee: "your-assignee-username" # Optional: Specify an assignee
+
+      - name: Enable Automerge
+        if: steps.create-pr.outputs.pr_number != ''
+        uses: peter-evans/enable-pull-request-automerge@v2
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          pull-request-number: ${{ steps.create-pr.outputs.pr_number }}
+          merge-method: merge
