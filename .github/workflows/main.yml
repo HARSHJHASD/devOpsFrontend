@@ -23,8 +23,6 @@ jobs:
           destination_branch: qa
           pr_title: "[Automated] Merge dev to qa"
           pr_body: "Automated Pull Request to merge changes from dev to qa"
-          pr_reviewer: "your-reviewer-username" # Optional: Specify a reviewer
-          pr_assignee: "your-assignee-username" # Optional: Specify an assignee
 
       - name: Enable Automerge
         if: steps.create-pr.outputs.pr_number != ''
