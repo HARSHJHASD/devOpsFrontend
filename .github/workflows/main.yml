@@ -1,0 +1,27 @@
+name: Deploy to UAT 
+on:
+  push:
+    branches:
+      - dev
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    concurrency:
+      group: uat-deploy
+      cancel-in-progress: true
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        ref: uat # Checkout the uat branch
+
+    - name: Merge dev into uat
+      run: |
+        git fetch origin dev:dev
+        git merge dev
+        git push origin uat
+
+      env:
+          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
